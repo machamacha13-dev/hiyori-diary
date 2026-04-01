@@ -1,0 +1,14 @@
+{
+  "name": "ひよりちゃんの連絡帳",
+  "short_name": "ひよりの連絡帳",
+  "description": "みちる愛児園中里ナーサリーの連絡帳",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#fef6e4",
+  "theme_color": "#f8b4b4",
+  "orientation": "portrait",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}
