@@ -12,444 +12,101 @@
 <title>ひよりちゃんの連絡帳</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&family=M+PLUS+Rounded+1c:wght@300;400;500;700&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Zen Maru Gothic','M PLUS Rounded 1c','Hiragino Maru Gothic ProN',sans-serif;background:#fef6e4;color:#5c4a3a;min-height:100vh}
 
-* { margin: 0; padding: 0; box-sizing: border-box; }
+/* Lock Screen */
+.lock-screen{position:fixed;top:0;left:0;right:0;bottom:0;background:linear-gradient(160deg,#fef6e4,#fce9d8,#f8e0d0);display:flex;align-items:center;justify-content:center;z-index:9999;transition:opacity .5s,transform .5s}
+.lock-screen.unlocked{opacity:0;transform:scale(1.05);pointer-events:none}
+.lock-box{text-align:center;padding:40px 32px;max-width:360px;width:100%}
+.lock-icon{font-size:80px;margin-bottom:12px;animation:bounce 2s infinite}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.lock-title{font-size:22px;font-weight:700;color:#6b4226;margin-bottom:4px}
+.lock-subtitle{font-size:13px;color:#a08468;margin-bottom:28px}
+.lock-input-wrap{display:flex;background:#fff;border:2px solid #f0d8c0;border-radius:16px;padding:10px 16px;box-shadow:0 4px 15px rgba(200,150,100,.12);transition:border-color .3s}
+.lock-input-wrap:focus-within{border-color:#f8b4b4}
+.lock-input-wrap.error{border-color:#e88;animation:shake .4s}
+@keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+.lock-input{flex:1;border:none;outline:none;font-size:16px;font-family:inherit;color:#5c4a3a;background:transparent;-webkit-text-security:disc}
+.lock-input::placeholder{color:#c9a88a}
+.lock-submit{background:linear-gradient(135deg,#f8b4b4,#f9d4a8);border:none;border-radius:12px;padding:10px 20px;font-size:15px;font-family:inherit;font-weight:700;color:#fff;cursor:pointer;margin-top:16px;width:100%;box-shadow:0 4px 12px rgba(200,140,100,.25)}
+.lock-submit:active{transform:scale(.97)}
+.lock-error{color:#d66;font-size:13px;margin-top:12px;min-height:20px}
 
-body {
-  font-family: 'Zen Maru Gothic', 'M PLUS Rounded 1c', 'Hiragino Maru Gothic ProN', sans-serif;
-  background: #fef6e4;
-  color: #5c4a3a;
-  min-height: 100vh;
-}
+/* App */
+.app{display:none}.app.show{display:block}
 
-/* ======== Lock Screen ======== */
-.lock-screen {
-  position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: linear-gradient(160deg, #fef6e4 0%, #fce9d8 50%, #f8e0d0 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
-  transition: opacity 0.5s, transform 0.5s;
-}
+/* Header */
+.header{background:linear-gradient(135deg,#f8b4b4 0%,#f9d4a8 50%,#fce9b0 100%);padding:24px 16px 12px;text-align:center;position:sticky;top:0;z-index:100;box-shadow:0 4px 20px rgba(200,150,100,.15)}
+.header h1{font-size:22px;font-weight:700;color:#6b4226;letter-spacing:2px}
+.header h1 .emoji{font-size:26px}
+.header .subtitle{font-size:12px;color:#8b6a50;margin-top:4px}
 
-.lock-screen.unlocked {
-  opacity: 0;
-  transform: scale(1.05);
-  pointer-events: none;
-}
+/* Source Tabs */
+.source-tabs{display:flex;justify-content:center;gap:0;margin-top:12px}
+.source-tab{font-family:inherit;font-size:14px;font-weight:600;padding:8px 28px;border:none;cursor:pointer;transition:all .2s;color:#a08468;background:transparent;border-bottom:3px solid transparent}
+.source-tab.active{color:#6b4226;border-bottom-color:#e87060}
+.source-tab:first-child.active{border-bottom-color:#e87060}
+.source-tab:last-child.active{border-bottom-color:#6ab0d4}
 
-.lock-box {
-  text-align: center;
-  padding: 40px 32px;
-  max-width: 360px;
-  width: 100%;
-}
+/* Controls */
+.controls{padding:16px;max-width:640px;margin:0 auto}
+.search-box{display:flex;align-items:center;background:#fff;border:2px solid #f0d8c0;border-radius:24px;padding:8px 16px;box-shadow:0 2px 8px rgba(200,150,100,.1)}
+.search-box input{flex:1;border:none;outline:none;font-size:15px;font-family:inherit;color:#5c4a3a;background:transparent}
+.search-box input::placeholder{color:#c9a88a}
+.search-icon{font-size:18px;margin-right:8px;color:#d4a574}
+.filter-row{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;justify-content:center}
+.filter-btn{font-family:inherit;font-size:13px;padding:6px 14px;border-radius:20px;border:2px solid #f0d8c0;background:#fff;color:#8b6a50;cursor:pointer;transition:all .2s}
+.filter-btn:hover,.filter-btn.active{background:#f8b4b4;border-color:#f8b4b4;color:#fff}
+.stats{text-align:center;font-size:13px;color:#b08a6a;margin-top:12px}
 
-.lock-icon {
-  font-size: 80px;
-  margin-bottom: 12px;
-  animation: bounce 2s infinite;
-}
+/* Timeline */
+.timeline{max-width:640px;margin:0 auto;padding:0 16px 80px}
+.month-divider{display:flex;align-items:center;gap:12px;margin:28px 0 16px}
+.month-divider .line{flex:1;height:1px;background:linear-gradient(90deg,transparent,#e0c8a8,transparent)}
+.month-divider .label{font-size:14px;font-weight:700;color:#c49060;white-space:nowrap;padding:4px 16px;background:#fef0d8;border-radius:20px;border:1px solid #e8d4b8}
 
-@keyframes bounce {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-8px); }
-}
+/* Entry Card */
+.entry-card{background:#fff;border-radius:20px;padding:20px;margin-bottom:16px;box-shadow:0 3px 15px rgba(180,140,100,.1);border:1px solid #f0e4d4;position:relative;overflow:hidden;transition:transform .2s,box-shadow .2s;cursor:pointer}
+.entry-card:hover{transform:translateY(-2px);box-shadow:0 6px 25px rgba(180,140,100,.18)}
+.entry-card::before{content:'';position:absolute;top:0;left:0;width:5px;height:100%;border-radius:20px 0 0 20px}
+.entry-card.from-school::before{background:linear-gradient(180deg,#f8b4b4,#fce9b0)}
+.entry-card.from-home::before{background:linear-gradient(180deg,#90c8e8,#a8dcc8)}
+.card-header{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.card-date{font-size:13px;font-weight:700;padding:4px 12px;border-radius:12px}
+.from-school .card-date{color:#d4856a;background:#fef0e8}
+.from-home .card-date{color:#4a8ca8;background:#e8f4fa}
+.card-day{font-size:12px;color:#b09878}
+.card-teacher{font-size:12px;color:#a08468;margin-left:auto;display:flex;align-items:center;gap:4px}
+.card-body{font-size:14.5px;line-height:1.85;color:#5c4a3a;white-space:pre-wrap}
+.card-body.collapsed{max-height:120px;overflow:hidden;position:relative}
+.card-body.collapsed::after{content:'';position:absolute;bottom:0;left:0;right:0;height:50px;background:linear-gradient(transparent,#fff)}
+.read-more{display:inline-block;margin-top:8px;font-size:13px;color:#e08a70;font-weight:500;cursor:pointer;font-family:inherit;border:none;background:none}
 
-.lock-title {
-  font-size: 22px;
-  font-weight: 700;
-  color: #6b4226;
-  margin-bottom: 4px;
-}
+/* Detail grid */
+.detail-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;margin-top:14px;padding-top:14px;border-top:1px dashed #e8d8c8}
+.detail-item{background:#fef8f0;border-radius:12px;padding:8px 10px;text-align:center}
+.detail-item .dlabel{font-size:11px;color:#b09878;margin-bottom:2px}
+.detail-item .dvalue{font-size:13px;font-weight:500;color:#6b4a2e;white-space:pre-wrap}
 
-.lock-subtitle {
-  font-size: 13px;
-  color: #a08468;
-  margin-bottom: 28px;
-}
+/* Modal */
+.modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(80,50,30,.4);z-index:200;justify-content:center;align-items:flex-start;padding:40px 16px;overflow-y:auto}
+.modal-overlay.show{display:flex}
+.modal{background:#fff;border-radius:24px;max-width:600px;width:100%;padding:28px 24px;box-shadow:0 10px 40px rgba(100,60,30,.2);animation:slideUp .3s ease-out;position:relative}
+@keyframes slideUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+.modal-close{position:absolute;top:16px;right:20px;font-size:24px;color:#c0a888;cursor:pointer;background:none;border:none}
+.modal .card-date{font-size:16px}
+.modal .card-body{font-size:15px;line-height:2}
 
-.lock-input-wrap {
-  display: flex;
-  align-items: center;
-  background: #fff;
-  border: 2px solid #f0d8c0;
-  border-radius: 16px;
-  padding: 10px 16px;
-  box-shadow: 0 4px 15px rgba(200,150,100,0.12);
-  transition: border-color 0.3s;
-}
+/* Scroll top */
+.scroll-top{position:fixed;bottom:24px;right:24px;width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#f8b4b4,#f9d4a8);color:#fff;border:none;font-size:20px;cursor:pointer;box-shadow:0 4px 15px rgba(200,140,100,.3);display:none;align-items:center;justify-content:center;z-index:50}
+.scroll-top.show{display:flex}
 
-.lock-input-wrap:focus-within {
-  border-color: #f8b4b4;
-}
-
-.lock-input-wrap.error {
-  border-color: #e88;
-  animation: shake 0.4s;
-}
-
-@keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  20%, 60% { transform: translateX(-6px); }
-  40%, 80% { transform: translateX(6px); }
-}
-
-.lock-input {
-  flex: 1;
-  border: none;
-  outline: none;
-  font-size: 16px;
-  font-family: inherit;
-  color: #5c4a3a;
-  background: transparent;
-  -webkit-text-security: disc;
-}
-
-.lock-input::placeholder { color: #c9a88a; }
-
-.lock-submit {
-  background: linear-gradient(135deg, #f8b4b4, #f9d4a8);
-  border: none;
-  border-radius: 12px;
-  padding: 10px 20px;
-  font-size: 15px;
-  font-family: inherit;
-  font-weight: 700;
-  color: #fff;
-  cursor: pointer;
-  margin-top: 16px;
-  width: 100%;
-  box-shadow: 0 4px 12px rgba(200,140,100,0.25);
-  transition: transform 0.15s;
-}
-
-.lock-submit:active { transform: scale(0.97); }
-
-.lock-error {
-  color: #d66;
-  font-size: 13px;
-  margin-top: 12px;
-  min-height: 20px;
-}
-
-/* ======== Main App (hidden until unlocked) ======== */
-.app { display: none; }
-.app.show { display: block; }
-
-/* ---- Header ---- */
-.header {
-  background: linear-gradient(135deg, #f8b4b4 0%, #f9d4a8 50%, #fce9b0 100%);
-  padding: 24px 16px 20px;
-  text-align: center;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  box-shadow: 0 4px 20px rgba(200,150,100,0.15);
-}
-
-.header h1 {
-  font-size: 22px;
-  font-weight: 700;
-  color: #6b4226;
-  letter-spacing: 2px;
-}
-
-.header h1 .emoji { font-size: 26px; }
-
-.header .subtitle {
-  font-size: 12px;
-  color: #8b6a50;
-  margin-top: 4px;
-  font-weight: 400;
-}
-
-/* ---- Search & Filter ---- */
-.controls {
-  padding: 16px;
-  max-width: 640px;
-  margin: 0 auto;
-}
-
-.search-box {
-  display: flex;
-  align-items: center;
-  background: #fff;
-  border: 2px solid #f0d8c0;
-  border-radius: 24px;
-  padding: 8px 16px;
-  box-shadow: 0 2px 8px rgba(200,150,100,0.1);
-}
-
-.search-box input {
-  flex: 1;
-  border: none;
-  outline: none;
-  font-size: 15px;
-  font-family: inherit;
-  color: #5c4a3a;
-  background: transparent;
-}
-
-.search-box input::placeholder { color: #c9a88a; }
-.search-icon { font-size: 18px; margin-right: 8px; color: #d4a574; }
-
-.filter-row {
-  display: flex;
-  gap: 8px;
-  margin-top: 12px;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-
-.filter-btn {
-  font-family: inherit;
-  font-size: 13px;
-  padding: 6px 14px;
-  border-radius: 20px;
-  border: 2px solid #f0d8c0;
-  background: #fff;
-  color: #8b6a50;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.filter-btn:hover, .filter-btn.active {
-  background: #f8b4b4;
-  border-color: #f8b4b4;
-  color: #fff;
-}
-
-.stats {
-  text-align: center;
-  font-size: 13px;
-  color: #b08a6a;
-  margin-top: 12px;
-}
-
-/* ---- Timeline ---- */
-.timeline {
-  max-width: 640px;
-  margin: 0 auto;
-  padding: 0 16px 80px;
-}
-
-.month-divider {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin: 28px 0 16px;
-}
-
-.month-divider .line {
-  flex: 1;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, #e0c8a8, transparent);
-}
-
-.month-divider .label {
-  font-size: 14px;
-  font-weight: 700;
-  color: #c49060;
-  white-space: nowrap;
-  padding: 4px 16px;
-  background: #fef0d8;
-  border-radius: 20px;
-  border: 1px solid #e8d4b8;
-}
-
-/* ---- Entry Card ---- */
-.entry-card {
-  background: #fff;
-  border-radius: 20px;
-  padding: 20px;
-  margin-bottom: 16px;
-  box-shadow: 0 3px 15px rgba(180,140,100,0.1);
-  border: 1px solid #f0e4d4;
-  position: relative;
-  overflow: hidden;
-  transition: transform 0.2s, box-shadow 0.2s;
-  cursor: pointer;
-}
-
-.entry-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 25px rgba(180,140,100,0.18);
-}
-
-.entry-card::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0;
-  width: 5px;
-  height: 100%;
-  background: linear-gradient(180deg, #f8b4b4, #fce9b0);
-  border-radius: 20px 0 0 20px;
-}
-
-.card-header {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 12px;
-}
-
-.card-date {
-  font-size: 13px;
-  font-weight: 700;
-  color: #d4856a;
-  background: #fef0e8;
-  padding: 4px 12px;
-  border-radius: 12px;
-}
-
-.card-day { font-size: 12px; color: #b09878; }
-
-.card-teacher {
-  font-size: 12px;
-  color: #a08468;
-  margin-left: auto;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.card-body {
-  font-size: 14.5px;
-  line-height: 1.85;
-  color: #5c4a3a;
-  white-space: pre-wrap;
-}
-
-.card-body.collapsed {
-  max-height: 120px;
-  overflow: hidden;
-  position: relative;
-}
-
-.card-body.collapsed::after {
-  content: '';
-  position: absolute;
-  bottom: 0; left: 0; right: 0;
-  height: 50px;
-  background: linear-gradient(transparent, #fff);
-}
-
-.read-more {
-  display: inline-block;
-  margin-top: 8px;
-  font-size: 13px;
-  color: #e08a70;
-  font-weight: 500;
-  cursor: pointer;
-  font-family: inherit;
-  border: none;
-  background: none;
-}
-
-/* ---- Detail info ---- */
-.card-detail {
-  margin-top: 16px;
-  padding-top: 14px;
-  border-top: 1px dashed #e8d8c8;
-  display: none;
-}
-.card-detail.show { display: block; }
-
-.detail-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-  gap: 10px;
-}
-
-.detail-item {
-  background: #fef8f0;
-  border-radius: 12px;
-  padding: 10px 12px;
-  text-align: center;
-}
-
-.detail-item .label { font-size: 11px; color: #b09878; margin-bottom: 4px; }
-.detail-item .value { font-size: 14px; font-weight: 500; color: #6b4a2e; }
-
-/* ---- Modal ---- */
-.modal-overlay {
-  display: none;
-  position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(80,50,30,0.4);
-  z-index: 200;
-  justify-content: center;
-  align-items: flex-start;
-  padding: 40px 16px;
-  overflow-y: auto;
-}
-.modal-overlay.show { display: flex; }
-
-.modal {
-  background: #fff;
-  border-radius: 24px;
-  max-width: 600px;
-  width: 100%;
-  padding: 28px 24px;
-  box-shadow: 0 10px 40px rgba(100,60,30,0.2);
-  animation: slideUp 0.3s ease-out;
-  position: relative;
-}
-
-@keyframes slideUp {
-  from { opacity: 0; transform: translateY(30px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.modal-close {
-  position: absolute;
-  top: 16px; right: 20px;
-  font-size: 24px;
-  color: #c0a888;
-  cursor: pointer;
-  background: none;
-  border: none;
-  font-family: inherit;
-}
-
-.modal .card-date { font-size: 16px; }
-.modal .card-body { font-size: 15px; }
-
-/* ---- Scroll to top ---- */
-.scroll-top {
-  position: fixed;
-  bottom: 24px;
-  right: 24px;
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #f8b4b4, #f9d4a8);
-  color: #fff;
-  border: none;
-  font-size: 20px;
-  cursor: pointer;
-  box-shadow: 0 4px 15px rgba(200,140,100,0.3);
-  display: none;
-  align-items: center;
-  justify-content: center;
-  z-index: 50;
-}
-.scroll-top.show { display: flex; }
-
-/* ---- Responsive ---- */
-@media (max-width: 480px) {
-  .header h1 { font-size: 18px; }
-  .entry-card { padding: 16px; }
-  .card-body { font-size: 14px; }
-}
+@media(max-width:480px){.header h1{font-size:18px}.entry-card{padding:16px}.card-body{font-size:14px}.source-tab{padding:8px 20px;font-size:13px}}
 </style>
 </head>
 <body>
 
-<!-- ======== Password Lock Screen ======== -->
 <div class="lock-screen" id="lockScreen">
   <div class="lock-box">
     <div class="lock-icon">&#x1F43B;</div>
@@ -465,14 +122,15 @@ body {
   </div>
 </div>
 
-<!-- ======== Main App ======== -->
 <div class="app" id="app">
-
   <div class="header">
     <h1><span class="emoji">&#x1F43B;</span> ひよりちゃんの連絡帳 <span class="emoji">&#x1F338;</span></h1>
     <div class="subtitle">みちる愛児園中里ナーサリー</div>
+    <div class="source-tabs">
+      <button class="source-tab active" onclick="switchSource('school')">&#x1F3EB; 園から</button>
+      <button class="source-tab" onclick="switchSource('home')">&#x1F3E0; おうちから</button>
+    </div>
   </div>
-
   <div class="controls">
     <div class="search-box">
       <span class="search-icon">&#x1F50D;</span>
@@ -481,254 +139,120 @@ body {
     <div class="filter-row" id="yearFilter"></div>
     <div class="stats" id="stats"></div>
   </div>
-
   <div class="timeline" id="timeline"></div>
-
   <button class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">&#x2191;</button>
-
   <div class="modal-overlay" id="modal">
-    <div class="modal">
-      <button class="modal-close" onclick="closeModal()">&times;</button>
-      <div id="modalContent"></div>
-    </div>
+    <div class="modal"><button class="modal-close" onclick="closeModal()">&times;</button><div id="modalContent"></div></div>
   </div>
 </div>
 
 <script>
-// ======== Password Protection ========
-// Hash the password for comparison (not stored in plain text in source)
-async function hashPassword(pw) {
-  const data = new TextEncoder().encode(pw);
-  const hash = await crypto.subtle.digest('SHA-256', data);
-  return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
+// Password
+async function hashPassword(pw){const d=new TextEncoder().encode(pw);const h=await crypto.subtle.digest('SHA-256',d);return Array.from(new Uint8Array(h)).map(b=>b.toString(16).padStart(2,'0')).join('')}
+let correctHash='';
+(async()=>{correctHash=await hashPassword('hiyori2364')})();
+async function tryUnlock(e){e.preventDefault();const h=await hashPassword(document.getElementById('lockInput').value);if(h===correctHash){sessionStorage.setItem('unlocked','1');document.getElementById('lockScreen').classList.add('unlocked');setTimeout(()=>{document.getElementById('lockScreen').style.display='none';document.getElementById('app').classList.add('show');loadApp()},500)}else{document.getElementById('lockInputWrap').classList.add('error');document.getElementById('lockError').textContent='パスワードが違います';setTimeout(()=>document.getElementById('lockInputWrap').classList.remove('error'),500)}return false}
+if(sessionStorage.getItem('unlocked')==='1'){document.getElementById('lockScreen').style.display='none';document.getElementById('app').classList.add('show');setTimeout(loadApp,0)}
+
+// App state
+let schoolEntries=[], parentEntries=[], currentSource='school';
+
+function loadApp(){
+  Promise.all([
+    fetch('entries.json').then(r=>r.json()),
+    fetch('parent_entries.json').then(r=>r.json()).catch(()=>[])
+  ]).then(([s,p])=>{schoolEntries=s;parentEntries=p;init()});
 }
 
-const PASS_HASH = '95e1f73250ff0de3a2b89tried';  // placeholder, will be set below
+function init(){buildYearFilter();renderEntries();setupSearch();setupScroll()}
 
-let correctHash = '';
-
-// Compute the hash on load
-(async () => {
-  // The correct password hash (SHA-256 of "hiyori2364")
-  correctHash = await hashPassword('hiyori2364');
-})();
-
-async function tryUnlock(e) {
-  e.preventDefault();
-  const input = document.getElementById('lockInput').value;
-  const inputHash = await hashPassword(input);
-
-  if (inputHash === correctHash) {
-    // Save session
-    sessionStorage.setItem('unlocked', '1');
-    document.getElementById('lockScreen').classList.add('unlocked');
-    setTimeout(() => {
-      document.getElementById('lockScreen').style.display = 'none';
-      document.getElementById('app').classList.add('show');
-      loadApp();
-    }, 500);
-  } else {
-    document.getElementById('lockInputWrap').classList.add('error');
-    document.getElementById('lockError').textContent = 'パスワードが違います';
-    setTimeout(() => {
-      document.getElementById('lockInputWrap').classList.remove('error');
-    }, 500);
-  }
-  return false;
-}
-
-// Check if already unlocked in this session
-if (sessionStorage.getItem('unlocked') === '1') {
-  document.getElementById('lockScreen').style.display = 'none';
-  document.getElementById('app').classList.add('show');
-  // defer load to after DOM
-  setTimeout(loadApp, 0);
-}
-
-// ======== Main App ========
-let entries = [];
-
-function loadApp() {
-  fetch('entries.json')
-    .then(r => r.json())
-    .then(data => {
-      entries = data;
-      init();
-    })
-    .catch(() => {
-      document.getElementById('timeline').innerHTML =
-        '<p style="text-align:center;padding:40px;color:#b08a6a;">データを読み込めませんでした</p>';
-    });
-}
-
-function init() {
+function switchSource(src){
+  currentSource=src;
+  document.querySelectorAll('.source-tab').forEach((t,i)=>{t.classList.toggle('active',i===(src==='school'?0:1))});
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelector('.filter-btn').classList.add('active');
+  document.getElementById('searchInput').value='';
   buildYearFilter();
   renderEntries();
-  setupSearch();
-  setupScroll();
+  window.scrollTo({top:0});
 }
 
-function parseEntry(entry) {
-  const body = entry.body || '';
-  const lines = body.split('\n');
-  let mainText = [], meal = '', mood_am = '', mood_pm = '', nap = '', poop = '', teacher = '';
-  let section = 'main';
+function getEntries(){return currentSource==='school'?schoolEntries:parentEntries}
 
-  for (const line of lines) {
-    const l = line.trim();
-    if (l.startsWith('園からの連絡帳')) continue;
-    if (l === entry.title) continue;
-    if (l.startsWith('To:') || l.startsWith('確認済') || l.match(/^\d{4}年/)) continue;
+function parseSchoolEntry(e){
+  const lines=(e.body||'').split('\n');let mainText=[],meal='',mood_am='',mood_pm='',nap='',poop='',teacher='',section='main';
+  for(const line of lines){const l=line.trim();if(l.startsWith('園からの連絡帳')||l===e.title)continue;if(l.startsWith('To:')||l.startsWith('確認済')||l.match(/^\d{4}年/))continue;
+    if(l==='食事'){section='meal';continue}if(l==='機嫌'){section='mood';continue}if(l==='午睡'){section='nap';continue}if(l==='排便'){section='poop';continue}
+    if(section==='meal'){meal=l;section='main';continue}if(section==='mood'){if(l.startsWith('午前'))mood_am=l.replace('午前：','');else if(l.startsWith('午後')){mood_pm=l.replace('午後：','');section='main'}continue}
+    if(section==='nap'){nap=l;section='main';continue}if(section==='poop'){poop=l;section='main';continue}if(section==='main'&&l)mainText.push(l)}
+  const tm=e.title.match(/：(.+?)より$/);teacher=tm?tm[1]:'';
+  const dm=e.date.match(/(\d{4})-(\d{2})-(\d{2})/);let year='',month='',day='',dow='';
+  if(dm){year=dm[1];month=parseInt(dm[2]);day=parseInt(dm[3]);const d=new Date(parseInt(year),month-1,day);dow=['日','月','火','水','木','金','土'][d.getDay()]}
+  return{...e,mainText:mainText.join('\n'),meal,mood_am,mood_pm,nap,poop,teacher,year,month,day,dayOfWeek:dow,source:'school'}
+}
 
-    if (l === '食事') { section = 'meal'; continue; }
-    if (l === '機嫌') { section = 'mood'; continue; }
-    if (l === '午睡') { section = 'nap'; continue; }
-    if (l === '排便') { section = 'poop'; continue; }
+function parseParentEntry(e){
+  const dm=e.date.match(/(\d{4})-(\d{2})-(\d{2})/);let year='',month='',day='',dow='';
+  if(dm){year=dm[1];month=parseInt(dm[2]);day=parseInt(dm[3]);const d=new Date(parseInt(year),month-1,day);dow=['日','月','火','水','木','金','土'][d.getDay()]}
+  return{...e,mainText:e.comment||'',year,month,day,dayOfWeek:dow,source:'home'}
+}
 
-    if (section === 'meal') { meal = l; section = 'main'; continue; }
-    if (section === 'mood') {
-      if (l.startsWith('午前')) mood_am = l.replace('午前：', '');
-      else if (l.startsWith('午後')) { mood_pm = l.replace('午後：', ''); section = 'main'; }
-      continue;
-    }
-    if (section === 'nap') { nap = l; section = 'main'; continue; }
-    if (section === 'poop') { poop = l; section = 'main'; continue; }
-    if (section === 'main' && l) mainText.push(l);
+function buildYearFilter(){
+  const entries=getEntries();
+  const years=[...new Set(entries.map(e=>e.date.substring(0,4)))].sort();
+  const c=document.getElementById('yearFilter');c.innerHTML='';
+  const all=document.createElement('button');all.className='filter-btn active';all.textContent='すべて';
+  all.onclick=()=>{document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));all.classList.add('active');renderEntries()};c.appendChild(all);
+  years.forEach(y=>{const b=document.createElement('button');b.className='filter-btn';b.textContent=y+'年';b.dataset.year=y;
+    b.onclick=()=>{document.querySelectorAll('.filter-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');renderEntries(y)};c.appendChild(b)})
+}
+
+function renderEntries(yf,st){
+  const tl=document.getElementById('timeline');tl.innerHTML='';
+  const raw=getEntries();
+  let filtered=raw.map(e=>currentSource==='school'?parseSchoolEntry(e):parseParentEntry(e));
+  if(yf)filtered=filtered.filter(e=>e.year===yf);
+  if(st){const q=st.toLowerCase();filtered=filtered.filter(e=>(e.mainText+(e.teacher||'')).toLowerCase().includes(q))}
+  filtered.sort((a,b)=>a.date.localeCompare(b.date));
+  document.getElementById('stats').textContent=filtered.length+' 件';
+  let curMonth='';
+  filtered.forEach((entry,idx)=>{
+    const mk=entry.year+'-'+String(entry.month).padStart(2,'0');
+    if(mk!==curMonth){curMonth=mk;const d=document.createElement('div');d.className='month-divider';d.innerHTML=`<div class="line"></div><div class="label">${entry.year}年${entry.month}月</div><div class="line"></div>`;tl.appendChild(d)}
+    const card=document.createElement('div');
+    card.className='entry-card '+(currentSource==='school'?'from-school':'from-home');
+    const preview=entry.mainText.length>150?entry.mainText.substring(0,150)+'...':entry.mainText;
+    const teacherHtml=entry.teacher?`<span class="card-teacher">&#x270D;&#xFE0F; ${entry.teacher}</span>`:'';
+    card.innerHTML=`<div class="card-header"><span class="card-date">${entry.month}/${entry.day}</span><span class="card-day">(${entry.dayOfWeek})</span>${teacherHtml}</div><div class="card-body collapsed">${preview}</div><button class="read-more" onclick="event.stopPropagation();openModal(${idx})">もっと読む &raquo;</button>`;
+    card.onclick=()=>openModal(idx);tl.appendChild(card)});
+  window._filtered=filtered
+}
+
+function openModal(idx){
+  const e=window._filtered[idx];if(!e)return;
+  let details=[];
+  if(currentSource==='school'){
+    if(e.meal)details.push({i:'&#x1F37D;',l:'食事',v:e.meal});if(e.mood_am)details.push({i:'&#x1F60A;',l:'午前',v:e.mood_am});if(e.mood_pm)details.push({i:'&#x1F60A;',l:'午後',v:e.mood_pm});
+    if(e.nap)details.push({i:'&#x1F4A4;',l:'午睡',v:e.nap});if(e.poop)details.push({i:'&#x1F6BD;',l:'排便',v:e.poop})
+  }else{
+    if(e.mood_night)details.push({i:'&#x1F319;',l:'機嫌(夜)',v:e.mood_night});if(e.mood_morning)details.push({i:'&#x2600;&#xFE0F;',l:'機嫌(朝)',v:e.mood_morning});
+    if(e.meal_night)details.push({i:'&#x1F319;',l:'夜ごはん',v:e.meal_night});if(e.meal_morning)details.push({i:'&#x2600;&#xFE0F;',l:'朝ごはん',v:e.meal_morning});
+    if(e.temperature)details.push({i:'&#x1F321;&#xFE0F;',l:'検温',v:e.temperature});
+    if(e.sleep_start||e.sleep_end)details.push({i:'&#x1F4A4;',l:'睡眠',v:(e.sleep_start?'入眠 '+e.sleep_start:'')+(e.sleep_end?' / 起床 '+e.sleep_end:'')});
+    if(e.bowel)details.push({i:'&#x1F6BD;',l:'排便',v:e.bowel});if(e.medicine)details.push({i:'&#x1F48A;',l:'投薬',v:e.medicine});
   }
-
-  const teacherMatch = entry.title.match(/：(.+?)より$/);
-  teacher = teacherMatch ? teacherMatch[1] : '';
-
-  const dateMatch = entry.date.match(/(\d{4})-(\d{2})-(\d{2})/);
-  let year = '', month = '', day = '', dayOfWeek = '';
-  if (dateMatch) {
-    year = dateMatch[1];
-    month = parseInt(dateMatch[2]);
-    day = parseInt(dateMatch[3]);
-    const d = new Date(parseInt(year), month - 1, day);
-    dayOfWeek = ['日','月','火','水','木','金','土'][d.getDay()];
-  }
-
-  return { ...entry, mainText: mainText.join('\n'), meal, mood_am, mood_pm, nap, poop, teacher, year, month, day, dayOfWeek };
+  const dhtml=details.length?`<div class="detail-grid">${details.map(d=>`<div class="detail-item"><div class="dlabel">${d.i} ${d.l}</div><div class="dvalue">${d.v}</div></div>`).join('')}</div>`:'';
+  const teacherHtml=e.teacher?`<span class="card-teacher">&#x270D;&#xFE0F; ${e.teacher}</span>`:'';
+  document.getElementById('modalContent').innerHTML=`<div class="card-header" style="margin-bottom:16px"><span class="card-date">${e.year}年${e.month}月${e.day}日</span><span class="card-day">(${e.dayOfWeek})</span>${teacherHtml}</div><div class="card-body" style="font-size:15px;line-height:2">${e.mainText}</div>${dhtml}`;
+  document.getElementById('modal').classList.add('show');document.body.style.overflow='hidden'
 }
+function closeModal(){document.getElementById('modal').classList.remove('show');document.body.style.overflow=''}
+document.getElementById('modal').addEventListener('click',e=>{if(e.target.classList.contains('modal-overlay'))closeModal()});
 
-function buildYearFilter() {
-  const years = [...new Set(entries.map(e => e.date.substring(0, 4)))].sort();
-  const container = document.getElementById('yearFilter');
-  container.innerHTML = '';
-  const allBtn = document.createElement('button');
-  allBtn.className = 'filter-btn active';
-  allBtn.textContent = 'すべて';
-  allBtn.onclick = () => { document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active')); allBtn.classList.add('active'); renderEntries(); };
-  container.appendChild(allBtn);
+function setupSearch(){let t;document.getElementById('searchInput').addEventListener('input',e=>{clearTimeout(t);t=setTimeout(()=>{const a=document.querySelector('.filter-btn.active');renderEntries(a?.dataset?.year||null,e.target.value)},300)})}
+function setupScroll(){window.addEventListener('scroll',()=>{document.getElementById('scrollTop').classList.toggle('show',window.scrollY>400)})}
 
-  years.forEach(y => {
-    const btn = document.createElement('button');
-    btn.className = 'filter-btn';
-    btn.textContent = y + '年';
-    btn.dataset.year = y;
-    btn.onclick = () => { document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); renderEntries(y); };
-    container.appendChild(btn);
-  });
-}
-
-function renderEntries(yearFilter, searchText) {
-  const timeline = document.getElementById('timeline');
-  timeline.innerHTML = '';
-  let filtered = entries.map(parseEntry);
-  if (yearFilter) filtered = filtered.filter(e => e.year === yearFilter);
-  if (searchText) { const q = searchText.toLowerCase(); filtered = filtered.filter(e => (e.mainText + e.title + e.teacher).toLowerCase().includes(q)); }
-  filtered.sort((a, b) => a.date.localeCompare(b.date));
-  document.getElementById('stats').textContent = filtered.length + ' 件の連絡帳';
-
-  let currentMonth = '';
-  filtered.forEach((entry, idx) => {
-    const monthKey = entry.year + '-' + String(entry.month).padStart(2, '0');
-    if (monthKey !== currentMonth) {
-      currentMonth = monthKey;
-      const divider = document.createElement('div');
-      divider.className = 'month-divider';
-      divider.innerHTML = `<div class="line"></div><div class="label">${entry.year}年${entry.month}月</div><div class="line"></div>`;
-      timeline.appendChild(divider);
-    }
-
-    const card = document.createElement('div');
-    card.className = 'entry-card';
-    const bodyPreview = entry.mainText.length > 150 ? entry.mainText.substring(0, 150) + '...' : entry.mainText;
-
-    card.innerHTML = `
-      <div class="card-header">
-        <span class="card-date">${entry.month}/${entry.day}</span>
-        <span class="card-day">(${entry.dayOfWeek})</span>
-        ${entry.teacher ? `<span class="card-teacher">&#x270D;&#xFE0F; ${entry.teacher}</span>` : ''}
-      </div>
-      <div class="card-body collapsed">${bodyPreview}</div>
-      <button class="read-more" onclick="event.stopPropagation(); openModal(${idx})">もっと読む &raquo;</button>
-    `;
-    card.onclick = () => openModal(idx);
-    timeline.appendChild(card);
-  });
-  window._filteredEntries = filtered;
-}
-
-function openModal(idx) {
-  const entry = window._filteredEntries[idx];
-  if (!entry) return;
-
-  const details = [];
-  if (entry.meal) details.push({ icon: '&#x1F37D;', label: '食事', value: entry.meal });
-  if (entry.mood_am) details.push({ icon: '&#x1F60A;', label: '午前', value: entry.mood_am });
-  if (entry.mood_pm) details.push({ icon: '&#x1F60A;', label: '午後', value: entry.mood_pm });
-  if (entry.nap) details.push({ icon: '&#x1F4A4;', label: '午睡', value: entry.nap });
-  if (entry.poop) details.push({ icon: '&#x1F6BD;', label: '排便', value: entry.poop });
-
-  const detailHTML = details.length ? `
-    <div class="card-detail show"><div class="detail-grid">
-      ${details.map(d => `<div class="detail-item"><div class="label">${d.icon} ${d.label}</div><div class="value">${d.value}</div></div>`).join('')}
-    </div></div>` : '';
-
-  document.getElementById('modalContent').innerHTML = `
-    <div class="card-header" style="margin-bottom:16px;">
-      <span class="card-date">${entry.year}年${entry.month}月${entry.day}日</span>
-      <span class="card-day">(${entry.dayOfWeek})</span>
-      ${entry.teacher ? `<span class="card-teacher">&#x270D;&#xFE0F; ${entry.teacher}</span>` : ''}
-    </div>
-    <div class="card-body" style="font-size:15px; line-height:2;">${entry.mainText}</div>
-    ${detailHTML}
-  `;
-  document.getElementById('modal').classList.add('show');
-  document.body.style.overflow = 'hidden';
-}
-
-function closeModal() {
-  document.getElementById('modal').classList.remove('show');
-  document.body.style.overflow = '';
-}
-
-document.getElementById('modal').addEventListener('click', e => { if (e.target.classList.contains('modal-overlay')) closeModal(); });
-
-function setupSearch() {
-  let timer;
-  document.getElementById('searchInput').addEventListener('input', e => {
-    clearTimeout(timer);
-    timer = setTimeout(() => {
-      const activeYear = document.querySelector('.filter-btn.active');
-      const year = activeYear?.dataset?.year || null;
-      renderEntries(year, e.target.value);
-    }, 300);
-  });
-}
-
-function setupScroll() {
-  window.addEventListener('scroll', () => {
-    document.getElementById('scrollTop').classList.toggle('show', window.scrollY > 400);
-  });
-}
-
-// ======== PWA Service Worker ========
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('sw.js').catch(() => {});
-}
+if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
 </script>
 </body>
 </html>

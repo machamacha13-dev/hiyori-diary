@@ -1,8 +1,9 @@
-const CACHE_NAME = 'hiyori-diary-v1';
+const CACHE_NAME = 'hiyori-diary-v2';
 const ASSETS = [
   './',
   './index.html',
   './entries.json',
+  './parent_entries.json',
   './manifest.json',
   './icon-192.png',
   './icon-512.png'
